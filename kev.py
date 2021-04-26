@@ -34,7 +34,11 @@ def get_processed_rules(rules):
 
 
 def get_processed_manipulators(manipulators):
-    return list(chain(process_manipulator(*m) for m in manipulators))
+    results = []
+    for manipulator in manipulators:
+        results = [*results, *process_manipulator(*manipulator)]
+
+    return results
 
 
 def process_manipulator(
