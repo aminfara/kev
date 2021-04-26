@@ -50,22 +50,14 @@ def process_manipulator(
     to_vim_mode,
     to_key_list,
 ):
+    results = []
+
     manipulator = {"type": "basic"}
     manipulator["from"] = get_from_key(from_key, from_modifiers)
     manipulator["conditions"] = [*get_current_vim_mode_conditions(current_vim_mode)]
 
-    if not from_key_second:
-        return [manipulator]
-    else:
-        manipulator = {**manipulator, **set_first_key_pressed_variable(from_key)}
-        manipulator.setdefault("conditions", []).append(
-            {"name": f"{from_key}_pressed", "type": "variable_unless", "value": 1}
-        )
-        manipulator["parameters"] = {
-            "basic.to_delayed_action_delay_milliseconds": DEFAULT_SECOND_KEY_DELAY_MS
-        }
-        return [
-            manipulator,
+    if from_key_second:
+        results.append(
             process_second_key_manipulator(
                 from_key,
                 from_modifiers,
@@ -75,7 +67,15 @@ def process_manipulator(
                 to_vim_mode,
                 to_key_list,
             ),
-        ]
+        )
+        manipulator = {**manipulator, **set_first_key_pressed_variable(from_key)}
+        manipulator["parameters"] = {
+            "basic.to_delayed_action_delay_milliseconds": DEFAULT_SECOND_KEY_DELAY_MS
+        }
+
+    results.append(manipulator)
+
+    return results
 
 
 def process_second_key_manipulator(
@@ -135,8 +135,13 @@ def set_first_key_pressed_variable(key_code):
         "to": [{"set_variable": {"name": f"{key_code}_pressed", "value": 1}}],
         "to_delayed_action": {
             "to_if_invoked": [
-                {"set_variable": {"name": f"{key_code}_pressed", "value": 0}}
-            ]
+                {"set_variable": {"name": f"{key_code}_pressed", "value": 0}},
+                {"key_code": key_code},
+            ],
+            "to_if_canceled": [
+                {"set_variable": {"name": f"{key_code}_pressed", "value": 0}},
+                {"key_code": key_code},
+            ],
         },
     }
 
