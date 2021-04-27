@@ -1,6 +1,13 @@
 import json
 from enum import Enum
-from itertools import chain
+from utils import (
+    mac_notify,
+    set_variable,
+    reset_variable,
+    check_if,
+    check_unless,
+    key_code,
+)
 
 
 DEFAULT_SECOND_KEY_DELAY_MS = 500
@@ -53,7 +60,7 @@ def process_manipulator(
     results = []
 
     manipulator = {"type": "basic"}
-    manipulator["from"] = get_from_key(from_key, from_modifiers)
+    manipulator["from"] = key_code(from_key, from_modifiers)
     manipulator["conditions"] = [*get_current_vim_mode_conditions(current_vim_mode)]
 
     if from_key_second:
@@ -88,59 +95,42 @@ def process_second_key_manipulator(
     to_key_list,
 ):
     manipulator = {"type": "basic"}
-    manipulator["from"] = get_from_key(from_key_second, from_modifiers_second)
+    manipulator["from"] = key_code(from_key_second, from_modifiers_second)
     manipulator["conditions"] = [*get_current_vim_mode_conditions(current_vim_mode)]
-    manipulator.setdefault("conditions", []).append(
-        {"name": f"{from_key}_pressed", "type": "variable_if", "value": 1}
-    )
-    manipulator["to"] = [{"set_variable": {"name": f"{from_key}_pressed", "value": 0}}]
+    manipulator["conditions"].append(check_if(f"{from_key}_pressed", 1))
+    manipulator["to"] = [reset_variable(f"{from_key}_pressed")]
 
     if to_vim_mode:
-        manipulator["to"].append({"set_variable": {"name": to_vim_mode, "value": 1}})
-        manipulator["to"].append(
-            {"shell_command": 'osascript -e \'display notification with title "NORMAL"'}
-        )
+        manipulator["to"].append(set_variable(to_vim_mode))
+        manipulator["to"].append(mac_notify("NORMAL"))
     return manipulator
-
-
-def get_from_key(from_key, from_modifiers):
-    result = {"key_code": from_key}
-
-    if from_modifiers:
-        result["modifiers"] = from_modifiers
-
-    return result
 
 
 def get_current_vim_mode_conditions(current_vim_mode):
     conditions = []
     if current_vim_mode == VimMode.NORMAL:
-        conditions.append(get_condition_variable_if(VimMode.NORMAL, 1))
-        conditions.append(get_condition_variable_if(VimMode.VISUAL, 0))
+        conditions.append(check_if(VimMode.NORMAL, 1))
+        conditions.append(check_if(VimMode.VISUAL, 0))
     elif current_vim_mode == VimMode.VISUAL:
-        conditions.append(get_condition_variable_if(VimMode.NORMAL, 0))
-        conditions.append(get_condition_variable_if(VimMode.VISUAL, 1))
+        conditions.append(check_if(VimMode.NORMAL, 0))
+        conditions.append(check_if(VimMode.VISUAL, 1))
     else:
-        conditions.append(get_condition_variable_if(VimMode.NORMAL, 0))
-        conditions.append(get_condition_variable_if(VimMode.VISUAL, 0))
+        conditions.append(check_if(VimMode.NORMAL, 0))
+        conditions.append(check_if(VimMode.VISUAL, 0))
     return conditions
-
-
-def get_condition_variable_if(variable_name, value):
-    return {"name": variable_name, "type": "variable_if", "value": value}
 
 
 def set_first_key_pressed_variable(key_code):
     return {
-        "to": [{"set_variable": {"name": f"{key_code}_pressed", "value": 1}}],
+        "to": [set_variable(f"{key_code}_pressed")],
         "to_delayed_action": {
             "to_if_invoked": [
-                {"set_variable": {"name": f"{key_code}_pressed", "value": 0}},
-                {"key_code": key_code},
+                reset_variable(f"{key_code}_pressed"),
+                key_code(key_code),
             ],
             "to_if_canceled": [
-                {"set_variable": {"name": f"{key_code}_pressed", "value": 0}},
-                {"key_code": key_code},
+                reset_variable(f"{key_code}_pressed"),
+                key_code(key_code),
             ],
         },
     }
