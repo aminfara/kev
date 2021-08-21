@@ -1,14 +1,14 @@
 import json
 from enum import Enum
-from utils import (
-    mac_notify,
-    set_variable,
-    reset_variable,
-    check_if,
-    check_unless,
-    key_code,
-)
 
+from ke_vim.utils import (
+    check_if_variable,
+    key_code,
+    mac_notify,
+    register_key,
+    reset_variable,
+    set_variable,
+)
 
 DEFAULT_SECOND_KEY_DELAY_MS = 500
 
@@ -97,7 +97,7 @@ def process_second_key_manipulator(
     manipulator = {"type": "basic"}
     manipulator["from"] = key_code(from_key_second, from_modifiers_second)
     manipulator["conditions"] = [*get_current_vim_mode_conditions(current_vim_mode)]
-    manipulator["conditions"].append(check_if(f"{from_key}_pressed", 1))
+    manipulator["conditions"].append(check_if_variable(f"{from_key}_pressed", 1))
     manipulator["to"] = [reset_variable(f"{from_key}_pressed")]
 
     if to_vim_mode:
@@ -109,28 +109,28 @@ def process_second_key_manipulator(
 def get_current_vim_mode_conditions(current_vim_mode):
     conditions = []
     if current_vim_mode == VimMode.NORMAL:
-        conditions.append(check_if(VimMode.NORMAL, 1))
-        conditions.append(check_if(VimMode.VISUAL, 0))
+        conditions.append(check_if_variable(VimMode.NORMAL, 1))
+        conditions.append(check_if_variable(VimMode.VISUAL, 0))
     elif current_vim_mode == VimMode.VISUAL:
-        conditions.append(check_if(VimMode.NORMAL, 0))
-        conditions.append(check_if(VimMode.VISUAL, 1))
+        conditions.append(check_if_variable(VimMode.NORMAL, 0))
+        conditions.append(check_if_variable(VimMode.VISUAL, 1))
     else:
-        conditions.append(check_if(VimMode.NORMAL, 0))
-        conditions.append(check_if(VimMode.VISUAL, 0))
+        conditions.append(check_if_variable(VimMode.NORMAL, 0))
+        conditions.append(check_if_variable(VimMode.VISUAL, 0))
     return conditions
 
 
-def set_first_key_pressed_variable(key_code):
+def set_first_key_pressed_variable(pressed_key):
     return {
-        "to": [set_variable(f"{key_code}_pressed")],
+        "to": [set_variable(f"{pressed_key}_pressed")],
         "to_delayed_action": {
             "to_if_invoked": [
-                reset_variable(f"{key_code}_pressed"),
-                key_code(key_code),
+                reset_variable(f"{pressed_key}_pressed"),
+                key_code(pressed_key),
             ],
             "to_if_canceled": [
-                reset_variable(f"{key_code}_pressed"),
-                key_code(key_code),
+                reset_variable(f"{pressed_key}_pressed"),
+                key_code(pressed_key),
             ],
         },
     }
