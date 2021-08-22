@@ -110,6 +110,46 @@ def mac_notify(title, message=""):
     }
 
 
+def move_left():
+    return [{"key_code": "left_arrow"}]
+
+
+def select_left():
+    moves = move_left()
+    moves[0]["modifiers"] = ["left_shift"]
+    return moves
+
+
+def move_right():
+    return [{"key_code": "right_arrow"}]
+
+
+def select_right():
+    moves = move_right()
+    moves[0]["modifiers"] = ["left_shift"]
+    return moves
+
+
+def move_up():
+    return [{"key_code": "up_arrow"}]
+
+
+def select_up():
+    moves = move_up()
+    moves[0]["modifiers"] = ["left_shift"]
+    return moves
+
+
+def move_down():
+    return [{"key_code": "down_arrow"}]
+
+
+def select_down():
+    moves = move_down()
+    moves[0]["modifiers"] = ["left_shift"]
+    return moves
+
+
 def move_line():
     return [
         {"key_code": "left_arrow", "modifiers": ["left_command"]},
