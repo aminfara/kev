@@ -39,6 +39,39 @@ def unless_key_pressed(first_key, second_key=""):
     return check_unless_variable(get_key_pressed_name(first_key, second_key))
 
 
+def if_vim_insert():
+    return [
+        check_unless_variable("vim_normal_mode"),
+        check_unless_variable("vim_visual_mode"),
+    ]
+
+
+def if_vim_normal():
+    return [
+        check_if_variable("vim_normal_mode"),
+        check_unless_variable("vim_visual_mode"),
+    ]
+
+
+def if_vim_visual():
+    return [
+        check_if_variable("vim_visual_mode"),
+        check_unless_variable("vim_normal_mode"),
+    ]
+
+
+def set_vim_insert():
+    return [reset_variable("vim_normal_mode"), reset_variable("vim_visual_mode")]
+
+
+def set_vim_normal():
+    return [set_variable("vim_normal_mode"), reset_variable("vim_visual_mode")]
+
+
+def set_vim_visual():
+    return [reset_variable("vim_normal_mode"), set_variable("vim_visual_mode")]
+
+
 def register_key(first_key, second_key=""):
     # Common structure for both case of having only first_key or having both keys
     manipulator = {
@@ -65,14 +98,13 @@ def register_key(first_key, second_key=""):
 
 def execute_key(
     command_key,
-    action={},
-    movements=[],
+    actions=[],
     first_registered_key="",
     second_registered_key="",
 ):
     manipulator = {
         "type": "basic",
-        "from_key": get_from_key(command_key),
+        "from": get_from_key(command_key),
         "to": [],
         "conditions": [],
     }
@@ -85,11 +117,8 @@ def execute_key(
             if_key_pressed(first_registered_key, second_registered_key)
         )
 
-    if movements:
-        manipulator["to"].extend(movements)
-
-    if action:
-        manipulator["to"].append(action)
+    if actions:
+        manipulator["to"].extend(actions)
 
     return manipulator
 
@@ -105,9 +134,11 @@ def key_code(key, modifiers=None):
 
 
 def mac_notify(title, message=""):
-    return {
-        "shell_command": 'osascript -e \'display notification "{message}" with title "\{title}"\''
-    }
+    return [
+        {
+            "shell_command": 'osascript -e \'display notification "{message}" with title "\{title}"\''
+        }
+    ]
 
 
 def move_left():
@@ -276,3 +307,11 @@ def get_paste():
 
 def get_delete():
     return [{"key_code": "delete_or_backspace"}]
+
+
+def prepend_conditions(manipulator, conditions):
+    manipulator["conditions"] = conditions + manipulator["conditions"]
+
+
+def fast_delay_action():
+    return {"parameters": {"basic.to_delayed_action_delay_milliseconds": 100}}
