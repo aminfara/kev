@@ -260,3 +260,19 @@ def select_paragraph_end():
     moves = move_paragraph_end()
     moves[0]["modifiers"].append("left_shift")
     return moves
+
+
+def get_cut():
+    return [{"key_code": "x", "modifiers": ["left_command"]}]
+
+
+def get_copy():
+    return [{"key_code": "c", "modifiers": ["left_command"]}]
+
+
+def get_paste():
+    return [{"key_code": "v", "modifiers": ["left_command"]}]
+
+
+def get_delete():
+    return [{"key_code": "delete_or_backspace"}]
