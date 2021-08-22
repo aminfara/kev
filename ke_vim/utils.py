@@ -63,17 +63,27 @@ def register_key(first_key, second_key=""):
     return manipulator
 
 
-def execute_key(command_key, action={}, movements=[], first_registered_key="", second_registered_key=""):
+def execute_key(
+    command_key,
+    action={},
+    movements=[],
+    first_registered_key="",
+    second_registered_key="",
+):
     manipulator = {
         "type": "basic",
         "from_key": get_from_key(command_key),
         "to": [],
-        "conditions": []
+        "conditions": [],
     }
 
     if first_registered_key:
-        manipulator["to"].append(reset_key_pressed(first_registered_key, second_registered_key))
-        manipulator["conditions"].append(if_key_pressed(first_registered_key, second_registered_key))
+        manipulator["to"].append(
+            reset_key_pressed(first_registered_key, second_registered_key)
+        )
+        manipulator["conditions"].append(
+            if_key_pressed(first_registered_key, second_registered_key)
+        )
 
     if movements:
         manipulator["to"].extend(movements)
@@ -82,6 +92,7 @@ def execute_key(command_key, action={}, movements=[], first_registered_key="", s
         manipulator["to"].append(action)
 
     return manipulator
+
 
 # TODO: merge with get_from_key
 def key_code(key, modifiers=None):
@@ -97,3 +108,115 @@ def mac_notify(title, message=""):
     return {
         "shell_command": 'osascript -e \'display notification "{message}" with title "\{title}"\''
     }
+
+
+def move_line():
+    return [
+        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+        {"key_code": "right_arrow", "modifiers": ["left_command"]},
+    ]
+
+
+def select_line():
+    moves = move_line()
+    moves[2]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_word_begining():
+    return [{"key_code": "left_arrow", "modifiers": ["left_alt"]}]
+
+
+def select_word_begining():
+    moves = move_word_begining()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_word_end():
+    return [{"key_code": "right_arrow", "modifiers": ["left_alt"]}]
+
+
+def select_word_end():
+    moves = move_word_end()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_line_very_begining():
+    return [
+        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+    ]
+
+
+def select_line_very_begining():
+    moves = move_line_very_begining()
+    moves[0]["modifiers"].append("left_shift")
+    moves[1]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_line_begining():
+    return [
+        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+    ]
+
+
+def select_line_begining():
+    moves = move_line_begining()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_line_end():
+    return [
+        {"key_code": "right_arrow", "modifiers": ["left_command"]},
+    ]
+
+
+def select_line_end():
+    moves = move_line_end()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_page_begining():
+    return [{"key_code": "up_arrow", "modifiers": ["left_command"]}]
+
+
+def select_page_begining():
+    moves = move_page_begining()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_page_end():
+    return [{"key_code": "down_arrow", "modifiers": ["left_command"]}]
+
+
+def select_page_end():
+    moves = move_page_end()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_paragraph_begining():
+    return [{"key_code": "a", "modifiers": ["left_control"]}]
+
+
+def select_paragraph_begining():
+    moves = move_paragraph_begining()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
+
+
+def move_paragraph_end():
+    return [{"key_code": "e", "modifiers": ["left_control"]}]
+
+
+def select_paragraph_end():
+    moves = move_paragraph_end()
+    moves[0]["modifiers"].append("left_shift")
+    return moves
