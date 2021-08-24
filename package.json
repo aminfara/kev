@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/aminfara/kev/issues"
   },
-  "homepage": "https://github.com/aminfara/kev#readme"
+  "homepage": "https://github.com/aminfara/kev#readme",
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
 }
