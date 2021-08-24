@@ -1,0 +1,23 @@
+{
+  "name": "ke-vim",
+  "version": "1.0.0",
+  "description": "Karabiner-elements vim config generator.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"OK\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aminfara/kev.git"
+  },
+  "keywords": [
+    "Karabiner",
+    "vim"
+  ],
+  "author": "aminfar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aminfara/kev/issues"
+  },
+  "homepage": "https://github.com/aminfara/kev#readme"
+}
