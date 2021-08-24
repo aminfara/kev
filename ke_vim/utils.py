@@ -1,3 +1,12 @@
+def key_code(key, modifiers=None):
+    result = {"key_code": key}
+
+    if modifiers:
+        result["modifiers"] = modifiers
+
+    return result
+
+
 def check_if_variable(variable_name, value=1):
     return {"name": variable_name, "type": "variable_if", "value": value}
 
@@ -12,10 +21,6 @@ def set_variable(variable_name, value=1):
 
 def reset_variable(variable_name):
     return {"set_variable": {"name": variable_name, "value": 0}}
-
-
-def get_from_key(key_code):
-    return {"key_code": key_code}
 
 
 def get_key_pressed_name(first_key, second_key=""):
@@ -72,11 +77,11 @@ def set_vim_visual():
     return [reset_variable("vim_normal_mode"), set_variable("vim_visual_mode")]
 
 
-def register_key(first_key, second_key=""):
+def register_key(first_key, second_key="", modifiers=[]):
     # Common structure for both case of having only first_key or having both keys
     manipulator = {
         "type": "basic",
-        "from": get_from_key(first_key),
+        "from": key_code(first_key, modifiers),
         "to": [
             set_key_pressed(first_key, second_key),
         ],
@@ -89,7 +94,7 @@ def register_key(first_key, second_key=""):
     }
 
     if second_key:
-        manipulator["from"] = get_from_key(second_key)
+        manipulator["from"] = key_code(second_key, modifiers)
         manipulator["to"].insert(0, reset_key_pressed(first_key))
         manipulator["conditions"].insert(0, if_key_pressed(first_key))
 
@@ -98,13 +103,14 @@ def register_key(first_key, second_key=""):
 
 def execute_key(
     command_key,
+    modifiers=[],
     actions=[],
     first_registered_key="",
     second_registered_key="",
 ):
     manipulator = {
         "type": "basic",
-        "from": get_from_key(command_key),
+        "from": key_code(command_key, modifiers),
         "to": [],
         "conditions": [],
     }
@@ -123,16 +129,6 @@ def execute_key(
     return manipulator
 
 
-# TODO: merge with get_from_key
-def key_code(key, modifiers=None):
-    result = {"key_code": key}
-
-    if modifiers:
-        result["modifiers"] = modifiers
-
-    return result
-
-
 def mac_notify(title, message=""):
     return [
         {
@@ -142,7 +138,7 @@ def mac_notify(title, message=""):
 
 
 def move_left():
-    return [{"key_code": "left_arrow"}]
+    return [key_code("left_arrow")]
 
 
 def select_left():
@@ -152,7 +148,7 @@ def select_left():
 
 
 def move_right():
-    return [{"key_code": "right_arrow"}]
+    return [key_code("right_arrow")]
 
 
 def select_right():
@@ -162,7 +158,7 @@ def select_right():
 
 
 def move_up():
-    return [{"key_code": "up_arrow"}]
+    return [key_code("up_arrow")]
 
 
 def select_up():
@@ -172,7 +168,7 @@ def select_up():
 
 
 def move_down():
-    return [{"key_code": "down_arrow"}]
+    return [key_code("down_arrow")]
 
 
 def select_down():
@@ -183,9 +179,9 @@ def select_down():
 
 def move_line():
     return [
-        {"key_code": "left_arrow", "modifiers": ["left_command"]},
-        {"key_code": "left_arrow", "modifiers": ["left_command"]},
-        {"key_code": "right_arrow", "modifiers": ["left_command"]},
+        key_code("left_arrow", ["left_command"]),
+        key_code("left_arrow", ["left_command"]),
+        key_code("right_arrow", ["left_command"]),
     ]
 
 
@@ -196,7 +192,7 @@ def select_line():
 
 
 def move_word_begining():
-    return [{"key_code": "left_arrow", "modifiers": ["left_alt"]}]
+    return [key_code("left_arrow", ["left_alt"])]
 
 
 def select_word_begining():
@@ -206,7 +202,7 @@ def select_word_begining():
 
 
 def move_word_end():
-    return [{"key_code": "right_arrow", "modifiers": ["left_alt"]}]
+    return [key_code("right_arrow", ["left_alt"])]
 
 
 def select_word_end():
@@ -217,8 +213,8 @@ def select_word_end():
 
 def move_line_very_begining():
     return [
-        {"key_code": "left_arrow", "modifiers": ["left_command"]},
-        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+        key_code("left_arrow", ["left_command"]),
+        key_code("left_arrow", ["left_command"]),
     ]
 
 
@@ -231,7 +227,7 @@ def select_line_very_begining():
 
 def move_line_begining():
     return [
-        {"key_code": "left_arrow", "modifiers": ["left_command"]},
+        key_code("left_arrow", ["left_command"]),
     ]
 
 
@@ -243,7 +239,7 @@ def select_line_begining():
 
 def move_line_end():
     return [
-        {"key_code": "right_arrow", "modifiers": ["left_command"]},
+        key_code("right_arrow", ["left_command"]),
     ]
 
 
@@ -254,7 +250,7 @@ def select_line_end():
 
 
 def move_page_begining():
-    return [{"key_code": "up_arrow", "modifiers": ["left_command"]}]
+    return [key_code("up_arrow", ["left_command"])]
 
 
 def select_page_begining():
@@ -264,7 +260,7 @@ def select_page_begining():
 
 
 def move_page_end():
-    return [{"key_code": "down_arrow", "modifiers": ["left_command"]}]
+    return [key_code("down_arrow", ["left_command"])]
 
 
 def select_page_end():
@@ -274,7 +270,7 @@ def select_page_end():
 
 
 def move_paragraph_begining():
-    return [{"key_code": "a", "modifiers": ["left_control"]}]
+    return [key_code("a", ["left_control"])]
 
 
 def select_paragraph_begining():
@@ -284,7 +280,7 @@ def select_paragraph_begining():
 
 
 def move_paragraph_end():
-    return [{"key_code": "e", "modifiers": ["left_control"]}]
+    return [key_code("e", ["left_control"])]
 
 
 def select_paragraph_end():
@@ -294,19 +290,19 @@ def select_paragraph_end():
 
 
 def get_cut():
-    return [{"key_code": "x", "modifiers": ["left_command"]}]
+    return [key_code("x", ["left_command"])]
 
 
 def get_copy():
-    return [{"key_code": "c", "modifiers": ["left_command"]}]
+    return [key_code("c", ["left_command"])]
 
 
 def get_paste():
-    return [{"key_code": "v", "modifiers": ["left_command"]}]
+    return [key_code("v", ["left_command"])]
 
 
 def get_delete():
-    return [{"key_code": "delete_or_backspace"}]
+    return [key_code("delete_or_backspace")]
 
 
 def prepend_conditions(manipulator, conditions):

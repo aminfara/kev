@@ -1,7 +1,7 @@
 from ke_vim.utils import (
     execute_key,
     fast_delay_action,
-    get_from_key,
+    key_code,
     if_vim_insert,
     if_vim_normal,
     mac_notify,
@@ -22,11 +22,11 @@ def insert_mode_j_manipulator():
     prepend_conditions(j_manipulator, if_vim_insert())
     j_manipulator["to_delayed_action"]["to_if_invoked"] = [
         reset_key_pressed("j"),
-        get_from_key("j"),
+        key_code("j"),
     ]
     j_manipulator["to_delayed_action"]["to_if_canceled"] = [
         reset_key_pressed("j"),
-        get_from_key("j"),
+        key_code("j"),
     ]
     return j_manipulator
 
@@ -35,7 +35,7 @@ def insert_mode_k_manipulator():
     k_manipulator = execute_key("k", first_registered_key="j")
     prepend_conditions(k_manipulator, if_vim_insert())
     k_manipulator["to_delayed_action"] = {
-        "to_if_invoked": [get_from_key("delete_or_backspace")] + set_vim_normal()
+        "to_if_invoked": [key_code("delete_or_backspace")] + set_vim_normal()
     }
     k_manipulator = {**k_manipulator, **fast_delay_action()}
 
