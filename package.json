@@ -4,6 +4,8 @@
   "description": "Karabiner-elements vim config generator.",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "execute": "npm run build && node ./dist/index.js",
     "test": "echo \"OK\""
   },
   "repository": {
@@ -21,6 +23,7 @@
   },
   "homepage": "https://github.com/aminfara/kev#readme",
   "devDependencies": {
+    "@types/node": "^16.7.2",
     "typescript": "^4.3.5"
   }
 }
